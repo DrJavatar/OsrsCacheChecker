@@ -35,8 +35,27 @@ object OsrsCacheChecker {
 
     private fun replaceIndexes(latest_osrs: CacheLibrary, custom_osrs: CacheLibrary) {
         custom_osrs.index(5).add(*latest_osrs.index(5).copyArchives())
-        custom_osrs.index(3).add(*latest_osrs.index(3).copyArchives())
+        copyInterfaces(latest_osrs, custom_osrs)
         custom_osrs.index(12).add(*latest_osrs.index(12).copyArchives())
+    }
+
+    private fun copyInterfaces(latest_osrs: CacheLibrary, custom_osrs: CacheLibrary) {
+        val latest = latest_osrs.index(3).also { it.cache() }
+        val custom = custom_osrs.index(3).also { it.cache() }
+
+        latest.archives().forEach {
+            val a = custom.archive(it.id)
+            if (a != null) {
+                it.files().forEach { lat ->
+                    if(lat.data != null) {
+                        a.add(lat)
+                    }
+                }
+            } else {
+                custom.add(it)
+            }
+        }
+
     }
 
     private fun copyMissingFiles(latest: Archive, custom: Archive) {
