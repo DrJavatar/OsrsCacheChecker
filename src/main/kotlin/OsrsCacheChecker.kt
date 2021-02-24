@@ -27,6 +27,8 @@ object OsrsCacheChecker {
             }
         }
 
+        custom_osrs.update()
+
     }
 
     private fun copyMissingFiles(latest: Archive, custom: Archive) {
