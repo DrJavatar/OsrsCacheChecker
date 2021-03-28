@@ -20,7 +20,7 @@ object MapPacker {
         val maps = custom_osrs.index(5)
 
         val objects = maps.add("l${regionX}_${regionY}", intArrayOf(0, 0, 0, 0))
-        val floors = maps.add("m${regionX}_${regionY}", intArrayOf(0, 0, 0, 0))
+        val floors = maps.add("m${regionX}_${regionY}")
         objects.add(0, objectsFile.readBytes())
         floors.add(0, landscapeFile.readBytes())
 
