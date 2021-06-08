@@ -2,6 +2,7 @@ package me.javatar
 
 import com.displee.cache.CacheLibrary
 import com.displee.cache.index.Index
+import java.lang.RuntimeException
 
 object CacheUpdater {
 
@@ -23,27 +24,47 @@ object CacheUpdater {
         val latest_osrs = CacheLibrary.create("/home/javatar/Downloads/latest/cache")
         val custom_osrs = CacheLibrary.create("/home/javatar/Downloads/customCache/Cache")
 
-        custom_osrs.replaceIndex(latest_osrs.index(0))
+        latest_osrs.indices().forEach { it.cache() }
+
+
+        custom_osrs.indices().forEach {
+            try {
+                it.cache()
+                if(it.id == 5) {
+                    custom_osrs.replaceMaps(it)
+                } else {
+                    it.add(*latest_osrs.index(it.id).copyArchives())
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+                it.clear()
+                throw RuntimeException("Index ${it.info}")
+            } finally {
+                it.clear()
+            }
+        }
+
+        /*custom_osrs.replaceIndex(latest_osrs.index(0))
         custom_osrs.replaceIndex(latest_osrs.index(1))
         custom_osrs.replaceConfigs(latest_osrs.index(2))
         //custom_osrs.replaceIndex(latest_osrs.index(3))
-        custom_osrs.replaceIndex(latest_osrs.index(4))
+        //custom_osrs.replaceIndex(latest_osrs.index(4))
         custom_osrs.replaceMaps(latest_osrs.index(5))
-        custom_osrs.replaceIndex(latest_osrs.index(6))
+        //custom_osrs.replaceIndex(latest_osrs.index(6))
         custom_osrs.replaceIndex(latest_osrs.index(7))
         custom_osrs.replaceIndex(latest_osrs.index(8))
         custom_osrs.replaceIndex(latest_osrs.index(9))
-        custom_osrs.replaceIndex(latest_osrs.index(10))
-        custom_osrs.replaceIndex(latest_osrs.index(11))
+        *//*custom_osrs.replaceIndex(latest_osrs.index(10))
+        custom_osrs.replaceIndex(latest_osrs.index(11))*//*
         //custom_osrs.replaceIndex(latest_osrs.index(12))
-        custom_osrs.replaceIndex(latest_osrs.index(13))
+        *//*custom_osrs.replaceIndex(latest_osrs.index(13))
         custom_osrs.replaceIndex(latest_osrs.index(14))
         custom_osrs.replaceIndex(latest_osrs.index(15))
         custom_osrs.replaceIndex(latest_osrs.index(16))
         custom_osrs.replaceIndex(latest_osrs.index(17))
         custom_osrs.replaceIndex(latest_osrs.index(18))
         custom_osrs.replaceIndex(latest_osrs.index(19))
-        custom_osrs.replaceIndex(latest_osrs.index(20))
+        custom_osrs.replaceIndex(latest_osrs.index(20))*/
 
         custom_osrs.update()
     }

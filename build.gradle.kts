@@ -14,7 +14,7 @@ repositories {
 }
 
 dependencies {
-    implementation("com.displee:rs-cache-library:6.8")
+    implementation("com.displee:rs-cache-library:6.6")
     implementation("com.javatar:osrs-definitions:0.1-SNAPSHOT")
     implementation("com.google.code.gson:gson:2.8.7")
     testImplementation(kotlin("test-junit"))
