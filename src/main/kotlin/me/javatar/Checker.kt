@@ -1,3 +1,5 @@
+package me.javatar
+
 import com.displee.cache.CacheLibrary
 import com.javatar.osrs.definitions.loaders.VarbitLoader
 

@@ -1,5 +1,6 @@
+package me.javatar
+
 import com.displee.cache.CacheLibrary
-import com.javatar.osrs.definitions.loaders.NpcLoader
 import com.javatar.osrs.definitions.loaders.ParamLoader
 
 object ParamTest {

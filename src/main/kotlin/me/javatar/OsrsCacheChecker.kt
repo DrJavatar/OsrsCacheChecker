@@ -1,3 +1,5 @@
+package me.javatar
+
 import com.displee.cache.CacheLibrary
 import com.displee.cache.index.Index
 import com.displee.cache.index.archive.Archive
@@ -7,8 +9,8 @@ object OsrsCacheChecker {
     @JvmStatic
     fun main(args: Array<String>) {
 
-        val latest_osrs = CacheLibrary.create("./latest_osrs")
-        val custom_osrs = CacheLibrary.create("./custom_osrs")
+        val latest_osrs = CacheLibrary.create("~/Downloads/original cache/Cache")
+        val custom_osrs = CacheLibrary.create("~/Downloads/latest/cache")
 
         val config = latest_osrs.index(2)
         config.archiveIds().forEach {
@@ -35,7 +37,7 @@ object OsrsCacheChecker {
 
     private fun replaceIndexes(latest_osrs: CacheLibrary, custom_osrs: CacheLibrary) {
         custom_osrs.index(5).add(*latest_osrs.index(5).copyArchives())
-        copyInterfaces(latest_osrs, custom_osrs)
+        //copyInterfaces(latest_osrs, custom_osrs)
         custom_osrs.index(12).add(*latest_osrs.index(12).copyArchives())
     }
 

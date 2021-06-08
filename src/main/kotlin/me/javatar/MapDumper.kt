@@ -1,5 +1,6 @@
+package me.javatar
+
 import com.displee.cache.CacheLibrary
-import com.displee.cache.index.archive.Archive
 
 object MapDumper {
 
@@ -11,6 +12,11 @@ object MapDumper {
         val custom = CacheLibrary.create("/home/javatar/custom/cache")
 
         val a = cache.index(5).copyArchives()
+
+        cache.index(5).copyArchives().forEach {
+            custom.index(5).add(it)
+        }
+
         custom.index(5).add(
             archives = a,
             true
