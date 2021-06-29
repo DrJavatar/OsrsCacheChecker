@@ -2,7 +2,10 @@ package me.javatar
 
 import com.displee.cache.CacheLibrary
 import com.displee.cache.index.Index
-import java.lang.RuntimeException
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
+import java.io.File
+import java.io.FileReader
 
 object CacheUpdater {
 
@@ -11,7 +14,7 @@ object CacheUpdater {
     @JvmStatic
     fun main(args: Array<String>) {
 
-        /*val gson = Gson()
+        val gson = Gson()
         val file = File("/home/javatar/Downloads/latest/xteas.json")
         val xteas = if(!file.exists()) {
             mutableMapOf()
@@ -19,30 +22,35 @@ object CacheUpdater {
             gson.fromJson<List<Xtea>>(FileReader(file), object : TypeToken<List<Xtea>>(){}.type).associateBy { it.mapsquare }
         }
 
-        println(xteas.size)*/
+        println(xteas.size)
 
         val latest_osrs = CacheLibrary.create("/home/javatar/Downloads/latest/cache")
         val custom_osrs = CacheLibrary.create("/home/javatar/Downloads/customCache/Cache")
-
-        latest_osrs.indices().forEach { it.cache() }
-
-
         custom_osrs.indices().forEach {
+            val latestIndex = latest_osrs.index(it.id)
+            latestIndex.cache()
             try {
-                it.cache()
-                if(it.id == 5) {
-                    custom_osrs.replaceMaps(it)
-                } else {
-                    it.add(*latest_osrs.index(it.id).copyArchives())
+                when(it.id) {
+                    0, 1, 2, 7, 8, 9 -> {
+                        it.add(*latestIndex.copyArchives())
+                    }
+                    /*2 -> {
+                        it.replaceConfigs(latestIndex, 10, 12, 9, 13, 6)
+                    }*/
+                    5 -> {
+                        custom_osrs.replaceMaps(it)
+                    }
                 }
             } catch (e: Exception) {
                 e.printStackTrace()
-                it.clear()
-                throw RuntimeException("Index ${it.info}")
+                return@forEach
             } finally {
-                it.clear()
+                latestIndex.clear()
+                System.gc()
             }
         }
+        custom_osrs.update()
+        println("Finished Copying Assets.")
 
         /*custom_osrs.replaceIndex(latest_osrs.index(0))
         custom_osrs.replaceIndex(latest_osrs.index(1))
@@ -66,24 +74,32 @@ object CacheUpdater {
         custom_osrs.replaceIndex(latest_osrs.index(19))
         custom_osrs.replaceIndex(latest_osrs.index(20))*/
 
-        custom_osrs.update()
     }
 
     private fun CacheLibrary.replaceMaps(latestMaps: Index, xteas: Map<Int, Xtea> = mutableMapOf()) {
-        if(xteas.isEmpty()) {
-            for (archiveId in latestMaps.archiveIds()) {
-                val latestArchive = latestMaps.archive(archiveId)
-                if(latestArchive != null) {
-                    for (fileId in latestArchive.fileIds()) {
-                        val file = latestArchive.file(fileId)
-                        if(file?.data != null) {
-                            put(5, archiveId, fileId, file.data!!)
-                        }
-                    }
+        for (entry in xteas) {
+            val regionId = entry.key
+            val xtea = entry.value
+            val regionX = regionId shr 8
+            val regionY = regionId and 255
+            val lfile = "l${regionX}_${regionY}"
+            val mfile = "m${regionX}_${regionY}"
+            val larchive = latestMaps.archive(lfile, xtea.key)
+            val marchive = latestMaps.archive(mfile)
+            if(larchive != null && marchive != null) {
+                index(5).add(larchive, xtea = xtea.key)
+                index(5).add(marchive)
+            }
+        }
+    }
+
+    private fun Index.replaceConfigs(latestConfigs: Index, vararg archiveIds: Int) {
+        for (latArchiveId in latestConfigs.archiveIds()) {
+            for (archiveId in archiveIds) {
+                if(latArchiveId == archiveId) {
+                    add(latestConfigs.archive(latArchiveId))
                 }
             }
-        } else {
-            TODO("Strip xteas to 0,0,0,0")
         }
     }
 
