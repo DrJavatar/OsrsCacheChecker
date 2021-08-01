@@ -9,7 +9,7 @@ object ClientScriptDumper {
     @JvmStatic
     fun main(args: Array<String>) {
 
-        val latest = CacheLibrary.create("/home/javatar/Downloads/latest/cache")
+        val latest = CacheLibrary.create("/home/javatar/Downloads/2021-07-21-rev197/cache")
 
         val scripts = latest.index(12)
         scripts.cache()
